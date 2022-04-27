@@ -60,15 +60,44 @@ requirejs(['./WorldWindShim',
         }
 
         // Define the images we'll use for the placemarks.
-        var images = ["Naa.png"];
+        var images = [
+            "plain-black.png",
+            "plain-blue.png",
+            "plain-brown.png",
+            "plain-gray.png",
+            "plain-green.png",
+            "plain-orange.png",
+            "plain-purple.png",
+            "plain-red.png",
+            "plain-teal.png",
+            "plain-white.png",
+            "plain-yellow.png",
+            "castshadow-black.png",
+            "castshadow-blue.png",
+            "castshadow-brown.png",
+            "castshadow-gray.png",
+            "castshadow-green.png",
+            "castshadow-orange.png",
+            "castshadow-purple.png",
+            "castshadow-red.png",
+            "castshadow-teal.png",
+            "castshadow-white.png"
+        ];
 
-        var pinLibrary = WorldWind.configuration.baseUrl + "images/Naa.png", // location of the image files
+        var pinLibrary = WorldWind.configuration.baseUrl + "images/pushpins/", // location of the image files
             placemark,
             placemarkAttributes = new WorldWind.PlacemarkAttributes(null),
             highlightAttributes,
             placemarkLayer = new WorldWind.RenderableLayer("Placemarks"),
-            latitude = 41.4459,
-            longitude = 74.4229;
+            latitude = 47.684444,
+            longitude = -121.129722;
+
+        var naaLogo = ("Naa.png");
+        var naaLibrary = WorldWind.configuration.baseUrl + "images",
+            naaMark,
+            naaMarkLayer = new WorldWind.RenderableLayer("Go Naa"),
+            naaLatitude = 41.4459,
+            naaLongitude = 74.4229;
 
         // Set up the common placemark attributes.
         placemarkAttributes.imageScale = 1;
@@ -109,8 +138,19 @@ requirejs(['./WorldWindShim',
             placemarkLayer.addRenderable(placemark);
         }
 
+        naaMark = new WorldWind.Placemark(new WorldWind.Position(naaLatitude, naaLongitude, 1e2), true, null);
+        naaMark.label = "Naa"+ "\n"
+            + "Lat" + "41.4459" + "\n"
+            + "Lon" + '74.4229' + "\n";
+        naaMark.altitudeMode = WorldWind.RELATIVE_TO_GROUND;
+        naaMark.attributes = placemarkAtrributes;
+        naaMark.highlightAttributes = highlightAttributes;
+        naaMarkLayer.addRenderable(naaMark);
+
         // Add the placemarks layer to the WorldWindow's layer list.
         wwd.addLayer(placemarkLayer);
+
+        wwd.addLayer(naaMarkLayer);
 
         // Now set up to handle picking.
 
