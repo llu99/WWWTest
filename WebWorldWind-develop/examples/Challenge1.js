@@ -92,12 +92,12 @@ requirejs(['./WorldWindShim',
             latitude = 47.684444,
             longitude = -121.129722;
 
-        var naaLogo = ("Naa.png");
-        var naaLibrary = WorldWind.configuration.baseUrl + "images",
+        var naaLibrary = WorldWind.configuration.baseUrl + "images/Naa.png",
             naaMark,
+            naaMarkAttributes = new WorldWind.PlacemarkAttributes(null),
             naaMarkLayer = new WorldWind.RenderableLayer("Go Naa"),
             naaLatitude = 41.4459,
-            naaLongitude = 74.4229;
+            naaLongitude = -74.4229;
 
         // Set up the common placemark attributes.
         placemarkAttributes.imageScale = 1;
@@ -143,14 +143,29 @@ requirejs(['./WorldWindShim',
             + "Lat" + "41.4459" + "\n"
             + "Lon" + '74.4229' + "\n";
         naaMark.altitudeMode = WorldWind.RELATIVE_TO_GROUND;
-        naaMark.attributes = placemarkAtrributes;
-        naaMark.highlightAttributes = highlightAttributes;
+
+        naaMarkAttributes = new WorldWind.PlacemarkAttributes(naaMarkAttributes);
+        naaMarkAttributes.imageSource = naaLibrary;
+        naaMark.attributes = naaMarkAttributes;
+        naaMark.highlightAttributes = new WorldWind.PlacemarkAttributes(naaMarkAttributes);
+
+        console.log(naaMark);
         naaMarkLayer.addRenderable(naaMark);
 
         // Add the placemarks layer to the WorldWindow's layer list.
         wwd.addLayer(placemarkLayer);
 
+        var box = function draw (){
+            fill(color('yellow'));
+            rect(naaLatitude,naaLongitude,500,500);
+        }
+        naaMarkLayer.addRenderable(box);
+
         wwd.addLayer(naaMarkLayer);
+
+        console.log(wwd);
+
+
 
         // Now set up to handle picking.
 
