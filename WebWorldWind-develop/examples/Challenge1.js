@@ -99,6 +99,12 @@ requirejs(['./WorldWindShim',
             naaLatitude = 41.4459,
             naaLongitude = -74.4229;
 
+        var kunming,
+            kunmingAttributes = new WorldWind.PlacemarkAttributes(null),
+            kunmingLatitude = 24.8797,
+            kunmingLongitude = 102.8332;
+
+
         // Set up the common placemark attributes.
         placemarkAttributes.imageScale = 1;
         placemarkAttributes.imageOffset = new WorldWind.Offset(
@@ -143,23 +149,30 @@ requirejs(['./WorldWindShim',
             + "Lat" + "41.4459" + "\n"
             + "Lon" + '74.4229' + "\n";
         naaMark.altitudeMode = WorldWind.RELATIVE_TO_GROUND;
-
         naaMarkAttributes = new WorldWind.PlacemarkAttributes(naaMarkAttributes);
         naaMarkAttributes.imageSource = naaLibrary;
         naaMark.attributes = naaMarkAttributes;
         naaMark.highlightAttributes = new WorldWind.PlacemarkAttributes(naaMarkAttributes);
 
         console.log(naaMark);
+
+        kunming = new WorldWind.Placemark(new WorldWind.Position(kunmingLatitude, kunmingLongitude, 1e2), true, null);
+        kunming.label = 'kunming' + "\n"
+            + "Lat" + "24.8797" + "\n"
+            + "Lon" + "102.8332" + "\n";
+        kunming.altitudeMode = WorldWind.RELATIVE_TO_GROUND;
+        kunmingAttributes = new WorldWind.PlacemarkAttributes(kunmingAttributes);
+        kunmingAttributes.imageSource = WorldWind.configuration.baseUrl + "images/cloud.png";
+        kunming.attributes = kunmingAttributes;
+        kunming.highlightAttributes = new WorldWind.PlacemarkAttributes(kunmingAttributes);
+
         naaMarkLayer.addRenderable(naaMark);
+        naaMarkLayer.addRenderable(kunming);
 
         // Add the placemarks layer to the WorldWindow's layer list.
         wwd.addLayer(placemarkLayer);
 
-        var box = function draw (){
-            fill(color('yellow'));
-            rect(naaLatitude,naaLongitude,500,500);
-        }
-        naaMarkLayer.addRenderable(box);
+        
 
         wwd.addLayer(naaMarkLayer);
 
@@ -185,13 +198,21 @@ requirejs(['./WorldWindShim',
                 highlightedItems[h].highlighted = false;
             }
             highlightedItems = [];
+            console.log(highlightedItems);
 
             // Perform the pick. Must first convert from window coordinates to canvas coordinates, which are
             // relative to the upper left corner of the canvas rather than the upper left corner of the page.
             var pickList = wwd.pick(wwd.canvasCoordinates(x, y));
-            if (pickList.objects.length > 0) {
+            console.log(pickList.objects);
+            // Get the modal
+            var modal = document.getElementById("myModal"),
+                // Get the <span> element that closes the modal
+                span =  document.getElementsByClassName("close")[0];
+
+  /**         if (pickList.objects.length > 0) {
                 redrawRequired = true;
             }
+**/
 
             // Highlight the items picked by simply setting their highlight flag to true.
             if (pickList.objects.length > 0) {
@@ -208,17 +229,33 @@ requirejs(['./WorldWindShim',
                     if (pickList.objects[p].labelPicked) {
                         console.log("Label picked");
                     }
+                    if (pickList.objects[p].position.latitude === naaLatitude && pickList.objects[p].position.longitude === naaLongitude) {
+                        function myFunction() {
+                            modal.style.display = "block";
+                        }
+                        myFunction();
+                        span.onclick = function(){
+                            modal.style.display = "none";
+                        }
+                        window.onclick = function(event){
+                            if (event.target == modal){
+                                modal.style.display = "none";
+                            }
+                        }
+                    }
                 }
             }
-
             // Update the window if we changed anything.
-            if (redrawRequired) {
+           if (redrawRequired) {
                 wwd.redraw(); // redraw to make the highlighting changes take effect on the screen
             }
         };
 
+
+
         // Listen for mouse moves and highlight the placemarks that the cursor rolls over.
-        wwd.addEventListener("mousemove", handlePick);
+        wwd.addEventListener("click", handlePick);
+       // wwd.addEventListener("mousemove", kunmingPick);
 
         // Listen for taps on mobile devices and highlight the placemarks that the user taps.
         var tapRecognizer = new WorldWind.TapRecognizer(wwd, handlePick);
